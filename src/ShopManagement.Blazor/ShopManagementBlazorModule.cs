@@ -64,6 +64,7 @@ using Volo.Abp.VirtualFileSystem;
 using Volo.Saas.Host;
 using Volo.Saas.Host.Blazor;
 using Volo.Saas.Host.Blazor.Server;
+using System.Security.Cryptography;
 
 namespace ShopManagement.Blazor;
 
@@ -126,7 +127,21 @@ public class ShopManagementBlazorModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
+                //using var algorithm = RSA.Create(keySizeInBits: 2048);
+
+                //var subject = new X500DistinguishedName("CN=Fabrikam Server Encryption Certificate");
+                //var request = new CertificateRequest(subject, algorithm, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                //request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.KeyEncipherment, critical: true));
+
+                //var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(2));
+
+                //File.WriteAllBytes("openiddict.pfx", certificate.Export(X509ContentType.Pfx, "f2ec55f1-074e-4f31-8934-5ad909cdd3d3"));
+
+                //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
+
+                var certificate = new X509Certificate2("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
+                serverBuilder.AddEncryptionCertificate(certificate)
+                       .AddSigningCertificate(certificate);
             });
         }
 
