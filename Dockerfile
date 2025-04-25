@@ -1,16 +1,15 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
 COPY . ./
-
-RUN dotnet restore
-RUN dotnet publish -c Release -o src/ShopManagement.Blazor/bin/publish
+RUN dotnet restore "src/ShopManagement.Blazor/ShopManagement.Blazor.csproj"
+RUN dotnet publish "src/ShopManagement.Blazor/ShopManagement.Blazor.csproj" -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /out ./
+COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
