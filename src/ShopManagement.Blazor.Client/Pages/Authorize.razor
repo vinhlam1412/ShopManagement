@@ -1,0 +1,44 @@
+﻿@page "/Authorize"
+@using System.Security.Cryptography
+@using System.Text
+@inject NavigationManager NavigationManager
+<h3>Authorize</h3>
+<Button Clicked="@AuthorizeClick">
+    Authorize
+</Button>
+@code {
+
+
+    public int partnerId = 1269496;
+    public string partnerKey = "4569687869744b67694c50686653686a4a4277626e726959716f6b53695a6467";
+
+
+    private void  AuthorizeClick()
+    {
+        var url =  AuthShop(partnerId, partnerKey);
+        NavigationManager.NavigateTo(url);
+    }
+
+    static string ComputeHmacSha256(string data, string key)
+    {
+        using (HMACSHA256 hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
+        {
+            byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
+    }
+
+    public string AuthShop(int partnerId, string partnerKey)
+    {
+        string host = "https://partner.test-stable.shopeemobile.com";
+        string path = "/api/v2/shop/auth_partner";
+        string redirectUrl = "https://localhost:44341/";
+
+        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        string baseString = $"{partnerId}{path}{timestamp}";
+        string sign = ComputeHmacSha256(baseString, partnerKey);
+        string url = $"{host}{path}?partner_id={partnerId}&timestamp={timestamp}&sign={sign}&redirect={Uri.EscapeDataString(redirectUrl)}";
+
+        return url;
+    }
+}

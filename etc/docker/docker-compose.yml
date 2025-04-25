@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  shopmanagement-blazor:
+    image: mycompanyname/shopmanagement-blazor:latest
+    container_name: shopmanagement-blazor
+    build:
+      context: ../../
+      dockerfile: src/ShopManagement.Blazor/Dockerfile.local
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80;
+      - Kestrel__Certificates__Default__Path=/root/certificate/localhost.pfx
+      - Kestrel__Certificates__Default__Password=c864e13f-d7c1-430a-9a12-99224f8a9fc2
+      - App__SelfUrl=https://localhost:44314
+      - AuthServer__RequireHttpsMetadata=false      
+      - AuthServer__Authority=http://shopmanagement-blazor
+      - ConnectionStrings__Default=User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=ShopManagement;Pooling=false;
+    ports:
+      - "44314:443"
+    restart: on-failure
+    volumes:
+      - ./certs:/root/certificate
+    networks:
+      - abp-network
+
+  db-migrator:
+    image: mycompanyname/shopmanagement-db-migrator:latest
+    container_name: db-migrator
+    build:
+      context: ../../
+      dockerfile: src/ShopManagement.DbMigrator/Dockerfile.local
+    environment:
+      - OpenIddict__Applications__ShopManagement_BlazorServerTiered__RootUrl=https://localhost:44314
+      - OpenIddict__Applications__ShopManagement_Swagger__RootUrl=https://localhost:44354
+      - ConnectionStrings__Default=User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=ShopManagement;Pooling=false;
+      - Redis__Configuration=redis
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - abp-network
+  
+  postgres:
+    container_name: postgres-db
+    image: postgres:14.1
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "myPassw0rd"
+    volumes:
+      - postgres_data:/var/opt/postgres
+    networks: 
+      - abp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5    
+volumes:
+  postgres_data:
+    name: shopmanagement_postgres_data
+networks:
+  abp-network:
+    name: shopmanagement-network
+    driver: bridge
