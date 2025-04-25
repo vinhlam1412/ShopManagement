@@ -6,7 +6,7 @@ COPY . ./
 RUN dotnet restore "src/ShopManagement.Blazor/ShopManagement.Blazor.csproj"
 RUN dotnet publish "src/ShopManagement.Blazor/ShopManagement.Blazor.csproj" -c Release -o /app/publish
 RUN dotnet tool install -g Volo.Abp.Cli
-RUN cd src/MyApp.Blazor && abp install-libs
+RUN cd src/ShopManagement.Blazor && abp install-libs
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
