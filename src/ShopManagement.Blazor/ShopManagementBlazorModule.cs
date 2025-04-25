@@ -139,15 +139,20 @@ public class ShopManagementBlazorModule : AbpModule
 
                 //serverBuilder.AddSigningCertificate(GetSigningCertificate(context.Services.GetHostingEnvironment(), configuration));
 
-                var certPassword = "f2ec55f1-074e-4f31-8934-5ad909cdd3d3";
-                serverBuilder
-                    .AddEncryptionCertificate(
-                        new X509Certificate2(
-                            Path.Combine(Directory.GetCurrentDirectory(), "openiddict.pfx"),
-                            certPassword));
+                //var certPassword = "f2ec55f1-074e-4f31-8934-5ad909cdd3d3";
+                //serverBuilder
+                //    .AddEncryptionCertificate(
+                //        new X509Certificate2(
+                //            Path.Combine(Directory.GetCurrentDirectory(), "openiddict.pfx"),
+                //            certPassword));
                 //var certificate = new X509Certificate2("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
                 //serverBuilder.AddEncryptionCertificate(certificate)
                 //       .AddSigningCertificate(certificate);
+
+                var fileName = "openiddict.pfx";
+                var passPhrase = "f2ec55f1-074e-4f31-8934-5ad909cdd3d3";
+                var file = Path.Combine(hostingEnvironment.ContentRootPath, fileName);
+                serverBuilder.AddProductionEncryptionAndSigningCertificate(file, passPhrase);
             });
         }
 
