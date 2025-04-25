@@ -6,7 +6,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:57581;http://localhost:57582"
+      //"applicationUrl": "https://localhost:57581;http://localhost:57582"
+      "applicationUrl": "https://shopmanagement-x5r0.onrender.com"
     }
   }
 }
