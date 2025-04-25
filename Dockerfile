@@ -17,7 +17,5 @@ COPY --from=build /app/publish .
 # Copy file certificate
 COPY src/ShopManagement.Blazor/openiddict.pfx /app/openiddict.pfx
 
-ENV ASPNETCORE_URLS=http://+:80
-EXPOSE 80
 
 ENTRYPOINT ["dotnet", "ShopManagement.Blazor.dll"]
