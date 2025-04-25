@@ -13,5 +13,6 @@ WORKDIR /app
 # Copy publish output
 COPY --from=build /app/publish .
 
-
+EXPOSE 80
+	
 ENTRYPOINT ["dotnet", "ShopManagement.Blazor.dll"]
