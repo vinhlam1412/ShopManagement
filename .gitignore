@@ -262,8 +262,6 @@ src/ShopManagement.DbMigrator/Logs/*
 src/ShopManagement.Blazor.Server/Logs/*
 src/ShopManagement.Blazor.Server.Tiered/Logs/*
 
-# Use abp install-libs to restore.
-**/wwwroot/libs/*
 
 # IdentityServer temp files
 tempkey.rsa
