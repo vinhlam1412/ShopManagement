@@ -137,11 +137,11 @@ public class ShopManagementBlazorModule : AbpModule
 
                 //File.WriteAllBytes("openiddict.pfx", certificate.Export(X509ContentType.Pfx, "f2ec55f1-074e-4f31-8934-5ad909cdd3d3"));
 
-                //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
+                serverBuilder.AddSigningCertificate(GetSigningCertificate(context.Services.GetHostingEnvironment(), configuration));
 
-                var certificate = new X509Certificate2("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
-                serverBuilder.AddEncryptionCertificate(certificate)
-                       .AddSigningCertificate(certificate);
+                //var certificate = new X509Certificate2("openiddict.pfx", "f2ec55f1-074e-4f31-8934-5ad909cdd3d3");
+                //serverBuilder.AddEncryptionCertificate(certificate)
+                //       .AddSigningCertificate(certificate);
             });
         }
 
@@ -150,6 +150,21 @@ public class ShopManagementBlazorModule : AbpModule
             options.IsBlazorWebApp = true;
         });
     }
+
+    private X509Certificate2 GetSigningCertificate(IWebHostEnvironment hostingEnv, IConfiguration configuration)
+    {
+        var fileName = "openiddict.pfx";
+        var passPhrase = "f2ec55f1-074e-4f31-8934-5ad909cdd3d3";
+        var file = Path.Combine(hostingEnv.ContentRootPath, fileName);
+
+        if (!File.Exists(file))
+        {
+            throw new FileNotFoundException($"Signing Certificate couldn't found: {file}");
+        }
+
+        return new X509Certificate2(file, passPhrase);
+    }
+
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
